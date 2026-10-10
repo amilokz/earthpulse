@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useMemo, useState } from "react";
 import PulseGlobe from "@/components/PulseGlobe";
 import ReportButton from "@/components/ReportButton";
+import ShareButton from "@/components/ShareButton";
 import { fetchToday, sendMood, type CountryMood, type KindnessNote } from "@/lib/api";
 import { getCountry } from "@/lib/countries";
 import { saveMood, todayKey, useLocalState } from "@/lib/local";
@@ -163,6 +164,16 @@ export default function MoodModule({ onVoted, children }: Props) {
                   <>Share EarthPulse so your friends can add their dots too 🌍</>
                 )}
               </p>
+              <div className="mt-4">
+                <ShareButton
+                  country={me.code}
+                  countryName={me.name}
+                  happy={myTotal >= MIN_VOTES_FOR_RANKING && me.code !== "XX" ? happyPercent(myCounts) : null}
+                  mood={voted}
+                  moodEmoji={moodByValue(voted).emoji}
+                  streak={streak}
+                />
+              </div>
             </div>
 
             {voted <= 2 && (

@@ -39,7 +39,7 @@ interface Feed {
 const fmtDate = (t: number) => new Date(t).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
 function timeLeft(ms: number) {
   const d = Math.ceil(ms / 864e5);
-  if (d > 365) return `${Math.round(d / 365)} years`;
+  if (d >= 360) { const y = Math.round(d / 365); return `${y} year${y === 1 ? "" : "s"}`; }
   if (d > 60) return `${Math.round(d / 30)} months`;
   return `${d} day${d === 1 ? "" : "s"}`;
 }

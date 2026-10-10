@@ -4,10 +4,19 @@ How is the world feeling today? One tap, no login: share your mood and watch the
 
 ## Status
 
-- ✅ Step 0: Next.js 16 + Tailwind 4 + Motion + react-globe.gl
-- ✅ Step 1: Mood UI (mock data): globe, 5-emoji vote, country result, kindness note on low moods, happiest countries, streak
-- ⏳ Step 2: Mood backend (Prisma + SQLite, `/api/mood`, geoip country)
-- ⏳ Capsule → Story + Kindness → Streak/share card/PWA → deploy to `pulse.akclnt.com`
+- ✅ World Mood: globe, 1-tap vote, country + world results, streak, share card
+- ✅ Kindness Notes: write, filter, reports, shown to people who feel low
+- ✅ Time Capsule: public/private, 1 month to 10 years, server-enforced unlock
+- ✅ World's Story: 1 line + 1 vote per day, daily winner (no cron)
+- ✅ PWA (installable), About/Privacy/Terms, /admin moderation
+- ⏳ Deploy to `pulse.akclnt.com` (VPS + PM2 + Nginx + Cloudflare)
+- ⏳ Phase 2: languages, push notifications, Country Spotlight, Pulse Journey game
+
+## Tech
+
+Next.js 16 · Tailwind 4 · Motion · react-globe.gl · better-sqlite3 · obscenity · next/og
+
+Copy `.env.example` to `.env.local` and fill in the values.
 
 ## Run locally
 
@@ -26,6 +35,7 @@ src/modules/<id>/          Har feature ka apna folder
 src/components/            Shared UI (PulseGlobe)
 src/lib/moods.ts           Mood definitions + helpers
 src/lib/local.ts           Client-side personal data (localStorage)
-src/lib/mock.ts            Mock data (Step 2 mein API se replace)
+src/server/                Backend logic (db, mood, story, capsule, moderation)
+src/app/api/               API routes
 public/textures/           Self-hosted globe textures (WebP)
 ```

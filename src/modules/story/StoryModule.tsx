@@ -138,7 +138,7 @@ export default function StoryModule() {
                     <span className="text-muted">
                       {getCountry(c.country).flag} {c.nickname ?? "anonymous"} {c.mine && "· your line"}
                     </span>
-                    <span className="text-gold font-extrabold">{picked ? "✓ your vote" : pct !== null ? `${pct}%` : "Tap to vote"}</span>
+                    <span className="text-gold font-extrabold">{picked ? "✓ your vote" : pct !== null ? `${pct}%` : c.mine ? "" : story.myVote !== null ? "" : "Tap to vote"}</span>
                   </span>
                 </motion.button>
                 {!c.mine && (

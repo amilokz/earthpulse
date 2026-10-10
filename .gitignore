@@ -42,3 +42,4 @@ next-env.d.ts
 
 # SQLite database (VPS par backup alag se)
 /data
+!.env.example
