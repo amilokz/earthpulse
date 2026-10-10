@@ -70,8 +70,8 @@ export default function PulseGlobe({ countries, highlight }: Props) {
           globeImageUrl="/textures/earth-night.webp"
           bumpImageUrl="/textures/earth-topology.webp"
           showAtmosphere
-          atmosphereColor="#7c9cff"
-          atmosphereAltitude={0.18}
+          atmosphereColor="#ffb27a"
+          atmosphereAltitude={0.22}
           pointsData={points}
           pointLat="lat"
           pointLng="lng"
@@ -81,7 +81,7 @@ export default function PulseGlobe({ countries, highlight }: Props) {
           pointLabel={(d: object) => {
             const p = d as (typeof points)[number];
             const m = dominantMood(p.counts);
-            return `<div style="font:600 13px Nunito,sans-serif;padding:6px 10px;border-radius:10px;background:#0b1026e6;color:#fff">${p.flag} ${p.name} · ${m.emoji} ${m.label}</div>`;
+            return `<div style="font:600 13px Nunito,sans-serif;padding:6px 10px;border-radius:10px;background:#1c1550f0;color:#fff">${p.flag} ${p.name} · ${m.emoji} ${m.label}</div>`;
           }}
           ringsData={rings}
           ringLat="lat"

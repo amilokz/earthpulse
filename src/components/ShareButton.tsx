@@ -51,17 +51,17 @@ export default function ShareButton({ country, countryName, happy, mood, moodEmo
   return (
     <div className="flex flex-col gap-2">
       <div className="flex gap-2">
-        <button onClick={share} className="bg-gold flex-1 rounded-full py-3 font-black text-black active:scale-95">
-          📤 Share my pulse
+        <button onClick={share} className="flex-1 rounded-full bg-gold py-3.5 text-lg font-extrabold text-ink shadow-[0_12px_30px_-12px_var(--gold)] active:scale-95">
+          Share my pulse
         </button>
         <a
           href={`https://wa.me/?text=${encodeURIComponent(`${text} ${siteUrl}`)}`}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Share on WhatsApp"
-          className="flex items-center rounded-full bg-[#25D366] px-5 text-xl font-black text-black active:scale-95"
+          className="flex items-center gap-1.5 rounded-full bg-[#25D366] px-5 font-extrabold text-ink active:scale-95"
         >
-          💬
+          WhatsApp
         </a>
       </div>
       {msg && <p className="text-muted text-center text-xs">{msg}</p>}

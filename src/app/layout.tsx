@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import "@fontsource-variable/nunito";
+import "@fontsource-variable/bricolage-grotesque";
+import "@fontsource/caveat/600.css";
 import "./globals.css";
 import AppHeader from "@/components/AppHeader";
 import BottomNav from "@/components/BottomNav";
@@ -25,7 +27,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#050816",
+  themeColor: "#0e0a2e",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",

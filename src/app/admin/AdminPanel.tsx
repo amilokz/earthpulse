@@ -53,7 +53,7 @@ export default function AdminPanel() {
           <option value="reported">Reported / hidden</option>
           <option value="recent">Recent</option>
         </select>
-        <button onClick={() => load()} className="bg-gold rounded-xl px-4 py-2 font-bold text-black">Load</button>
+        <button onClick={() => load()} className="bg-gold rounded-xl px-4 py-2 font-bold text-ink">Load</button>
       </div>
       {error && <p className="mt-3 text-red-300">{error}</p>}
       <ul className="mt-4 flex flex-col gap-2">

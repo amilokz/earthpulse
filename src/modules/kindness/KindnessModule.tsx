@@ -26,46 +26,46 @@ export default function KindnessModule() {
   };
 
   return (
-    <div className="card border-pink-300/20">
+    <div className="card relative overflow-hidden">
       <AnimatePresence mode="wait">
         {state === "sent" ? (
           <motion.div key="sent" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="py-2 text-center">
             <motion.p animate={{ y: [0, -12, 0] }} transition={{ duration: 0.8 }} className="text-5xl">
               💌
             </motion.p>
-            <p className="mt-2 text-lg font-extrabold">Your note is on its way</p>
-            <p className="text-muted text-sm">Someone who feels sad today will read it.</p>
-            <button onClick={() => setState("idle")} className="text-gold mt-3 text-sm font-bold">
+            <p className="display mt-2 text-xl font-extrabold">Your note is on its way</p>
+            <p className="text-sm text-muted">Someone who feels sad today will read it.</p>
+            <button onClick={() => setState("idle")} className="mt-3 text-sm font-extrabold underline underline-offset-4">
               Write another
             </button>
           </motion.div>
         ) : (
           <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <p className="font-extrabold">💌 Leave a note for a stranger</p>
-            <p className="text-muted text-sm">Someone sad today, anywhere in the world, will read it.</p>
+            <h2 className="text-xl font-extrabold">💌 Write a note for a stranger</h2>
+            <p className="text-sm text-muted">Someone who feels sad today, anywhere in the world, will get it.</p>
             <textarea
               value={text}
               onChange={(e) => setText(e.target.value.slice(0, MAX))}
               placeholder={IDEAS[0]}
               rows={3}
-              className="mt-3 w-full resize-none rounded-2xl border border-white/10 bg-black/30 p-3 text-base outline-none placeholder:text-white/30 focus:border-pink-300/50"
+              className="mt-3 w-full resize-none rounded-md bg-[var(--paper)] px-4 py-3 font-[family-name:var(--font-hand)] text-2xl leading-tight text-ink shadow-inner outline-none placeholder:text-ink/35"
             />
             <div className="mt-1 flex flex-wrap gap-2">
               {IDEAS.map((i) => (
-                <button key={i} onClick={() => setText(i)} className="rounded-full bg-white/5 px-3 py-1 text-xs font-bold text-white/70 hover:bg-white/10">
+                <button key={i} onClick={() => setText(i)} className="rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-cream/85 hover:bg-white/20">
                   {i}
                 </button>
               ))}
             </div>
-            {error && <p className="mt-2 text-sm font-bold text-red-300">{error}</p>}
+            {error && <p className="mt-2 rounded-xl bg-white/70 px-3 py-1.5 text-sm font-bold text-red-700">{error}</p>}
             <div className="mt-3 flex items-center justify-between">
-              <span className="text-muted text-xs">{text.length}/{MAX}</span>
+              <span className="text-xs font-bold text-muted">{text.length}/{MAX}</span>
               <button
                 onClick={submit}
                 disabled={state === "sending" || text.trim().length < 8}
-                className="rounded-full bg-pink-400 px-5 py-2 font-extrabold text-black transition active:scale-95 disabled:opacity-40"
+                className="rounded-full bg-[var(--ember)] px-5 py-2.5 font-extrabold text-ink transition active:scale-95 disabled:opacity-40"
               >
-                {state === "sending" ? "Sending…" : "Send 💌"}
+                {state === "sending" ? "Sending…" : "Send note"}
               </button>
             </div>
           </motion.div>

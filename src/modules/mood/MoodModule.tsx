@@ -8,7 +8,7 @@ import ShareButton from "@/components/ShareButton";
 import { fetchToday, sendMood, type CountryMood, type KindnessNote } from "@/lib/api";
 import { getCountry } from "@/lib/countries";
 import { saveMood, todayKey, useLocalState } from "@/lib/local";
-import { MOODS, happyPercent, moodByValue, totalVotes, type MoodCounts, type MoodValue } from "@/lib/moods";
+import { MOODS, dominantMood, happyPercent, moodByValue, totalVotes, type MoodCounts, type MoodValue } from "@/lib/moods";
 
 const MIN_VOTES_FOR_RANKING = 3; // 1 vote se "100% happy" na dikhe
 
@@ -93,130 +93,137 @@ export default function MoodModule({ onVoted, children }: Props) {
   const sameFeel = voted ? Math.max(0, world[voted] - 1) : 0;
   const myTotal = totalVotes(myCounts);
 
-  return (
-    <section className="flex w-full flex-col items-center gap-6">
-      <PulseGlobe countries={countries} highlight={voted ? myCountry : undefined} />
+  const worldTotal = totalVotes(world);
+  // Smile ki shakal: kinare upar, beech neeche
+  const ARC = [0, 16, 24, 16, 0];
 
-      {error && <p className="rounded-2xl bg-red-500/15 px-4 py-2 text-sm font-bold text-red-200">{error}</p>}
+  return (
+    <section className="flex w-full flex-col items-center">
+      <div className="relative w-full">
+        <div className="heartbeat pointer-events-none absolute left-1/2 top-1/2 aspect-square w-[78%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,#ff9a5a55_0%,#ff6b8b22_45%,transparent_70%)] blur-2xl" />
+        <div className="relative mx-auto flex justify-center">
+          <PulseGlobe countries={countries} highlight={voted ? myCountry : undefined} />
+        </div>
+      </div>
+
+      {error && <p className="mb-4 rounded-2xl bg-red-500/20 px-4 py-2 text-sm font-bold text-red-100">{error}</p>}
 
       <AnimatePresence mode="wait">
         {loading ? (
-          <motion.div key="load" exit={{ opacity: 0 }} className="h-40 w-full max-w-md animate-pulse rounded-3xl bg-white/5" />
+          <motion.div key="load" exit={{ opacity: 0 }} className="-mt-10 h-48 w-full max-w-md animate-pulse rounded-[2rem] bg-white/5" />
         ) : !voted ? (
           <motion.div
             key="ask"
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="flex w-full flex-col items-center gap-6 text-center"
+            exit={{ opacity: 0, scale: 0.96 }}
+            className="relative z-10 -mt-14 flex w-full flex-col items-center text-center"
           >
-            <h1 className="text-3xl font-extrabold leading-tight sm:text-4xl">
-              How are you feeling <span className="text-gold">today?</span>
-            </h1>
-            <p className="text-muted -mt-3">One tap. No login. The whole world is answering.</p>
-            <div className="flex w-full max-w-md justify-between gap-2">
+            <h1 className="max-w-[12ch] text-[2.6rem] font-extrabold leading-[0.95] sm:text-6xl">How do you feel today?</h1>
+            <p className="text-muted mt-3 max-w-[30ch] text-base">Tap one. Your dot joins the world&apos;s live mood.</p>
+
+            <div className="mt-6 flex w-full max-w-md items-start justify-between px-1">
               {MOODS.map((m, i) => (
                 <motion.button
                   key={m.value}
                   onClick={() => vote(m.value)}
                   disabled={sending}
-                  initial={{ opacity: 0, scale: 0.6 }}
-                  animate={{ opacity: 1, scale: 1, transition: { delay: 0.08 * i } }}
-                  whileHover={{ scale: 1.12, y: -4 }}
-                  whileTap={{ scale: 0.9 }}
+                  initial={{ opacity: 0, y: ARC[i] + 30 }}
+                  animate={{ opacity: 1, y: ARC[i], transition: { delay: 0.25 + 0.07 * i, type: "spring", stiffness: 260, damping: 18 } }}
+                  whileHover={{ y: ARC[i] - 8, scale: 1.08 }}
+                  whileTap={{ scale: 0.88 }}
                   aria-label={m.label}
-                  className="flex aspect-square flex-1 flex-col items-center justify-center rounded-3xl border border-white/10 bg-white/5 text-4xl shadow-lg backdrop-blur disabled:opacity-50 sm:text-5xl"
+                  className="group flex w-[18%] flex-col items-center gap-1.5 disabled:opacity-50"
                 >
-                  {m.emoji}
-                  <span className="text-muted mt-1 text-[11px] font-bold sm:text-xs">{m.label}</span>
+                  <span
+                    className="flex aspect-square w-full items-center justify-center rounded-full text-[2.4rem] sm:text-5xl"
+                    style={{ background: `radial-gradient(circle at 50% 35%, ${m.color}55, ${m.color}14 70%)`, boxShadow: `0 0 0 2px ${m.color}44, 0 10px 30px -10px ${m.color}` }}
+                  >
+                    {m.emoji}
+                  </span>
+                  <span className="text-xs font-extrabold text-cream/80 group-hover:text-cream">{m.label}</span>
                 </motion.button>
               ))}
             </div>
+
+            <p className="text-muted mt-10 text-sm">
+              {worldTotal > 0 ? `${worldTotal.toLocaleString()} people have shared their mood today` : "Nobody has shared yet today. Be the first dot on the map."}
+            </p>
           </motion.div>
         ) : (
-          <motion.div
-            key="result"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex w-full max-w-md flex-col gap-4"
-          >
-            <div className="card text-center">
+          <motion.div key="result" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} className="relative z-10 -mt-10 flex w-full max-w-md flex-col gap-5">
+            <div className="text-center">
               <p className="text-muted text-sm font-bold">
-                You felt {moodByValue(voted).emoji} {moodByValue(voted).label.toLowerCase()} today · your dot is glowing ✨
+                You felt {moodByValue(voted).emoji} {moodByValue(voted).label.toLowerCase()} today
               </p>
-              {myTotal >= MIN_VOTES_FOR_RANKING ? (
-                <p className="mt-2 text-2xl font-extrabold">
-                  {me.flag} {me.name} is <span className="text-gold">{happyPercent(myCounts)}% happy</span> today
-                </p>
-              ) : (
-                <p className="mt-2 text-2xl font-extrabold">
-                  You&apos;re one of the first from {me.flag} <span className="text-gold">{me.name}</span> today!
-                </p>
-              )}
-              <MoodBar counts={myCounts} />
-              <p className="text-muted mt-3 text-sm">
-                {sameFeel > 0 ? (
+              <h1 className="mt-2 text-[2.3rem] font-extrabold leading-[1] sm:text-5xl">
+                {myTotal >= MIN_VOTES_FOR_RANKING ? (
                   <>
-                    You and <b className="text-white">{sameFeel.toLocaleString()}</b> others feel{" "}
-                    {moodByValue(voted).label.toLowerCase()} today. You&apos;re not alone.
+                    {me.flag} {me.name} feels mostly {dominantMood(myCounts).label.toLowerCase()} today
                   </>
                 ) : (
-                  <>Share EarthPulse so your friends can add their dots too 🌍</>
+                  <>You&apos;re one of the first from {me.flag} {me.name}</>
                 )}
+              </h1>
+              <Spectrum counts={myCounts} />
+              {myTotal >= MIN_VOTES_FOR_RANKING && (
+                <p className="mt-1 text-sm font-bold text-cream/85">
+                  {happyPercent(myCounts)}% happy · {myTotal.toLocaleString()} moods from {me.name} today
+                </p>
+              )}
+              <p className="text-muted mt-3 text-sm">
+                {sameFeel > 0
+                  ? `${sameFeel.toLocaleString()} other people feel ${moodByValue(voted).label.toLowerCase()} today too. You're not alone.`
+                  : "Your friends haven't added their dots yet. Send them EarthPulse."}
               </p>
-              <div className="mt-4">
-                <ShareButton
-                  country={me.code}
-                  countryName={me.name}
-                  happy={myTotal >= MIN_VOTES_FOR_RANKING && me.code !== "XX" ? happyPercent(myCounts) : null}
-                  mood={voted}
-                  moodEmoji={moodByValue(voted).emoji}
-                  streak={streak}
-                />
-              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <ShareButton
+                country={me.code}
+                countryName={me.name}
+                happy={myTotal >= MIN_VOTES_FOR_RANKING && me.code !== "XX" ? happyPercent(myCounts) : null}
+                mood={voted}
+                moodEmoji={moodByValue(voted).emoji}
+                streak={streak}
+              />
+              <p className="text-center text-sm font-bold text-cream/80">
+                🔥 Day {streak} · come back tomorrow, the world resets at midnight UTC
+              </p>
             </div>
 
             {voted <= 2 && (
-              <motion.div
-                initial={{ opacity: 0, rotateX: -60 }}
-                animate={{ opacity: 1, rotateX: 0, transition: { delay: 0.4 } }}
-                className="card border-pink-300/30 bg-pink-400/10"
+              <motion.figure
+                initial={{ opacity: 0, rotate: 4, y: 20 }}
+                animate={{ opacity: 1, rotate: -1.5, y: 0, transition: { delay: 0.5, type: "spring" } }}
+                className="relative mx-2 rounded-md bg-[var(--paper)] px-6 pb-5 pt-7 text-ink shadow-[0_24px_50px_-20px_rgba(0,0,0,0.7)]"
               >
-                <p className="text-sm font-bold text-pink-200">💌 A note for you</p>
-                <p className="mt-2 text-lg leading-snug">“{note?.text ?? starter}”</p>
-                <div className="mt-2 flex items-center justify-between gap-2">
-                  <p className="text-muted text-sm">
-                    {note ? <>— a stranger in {getCountry(note.country).flag} {getCountry(note.country).name}</> : "— the EarthPulse team"}
-                  </p>
+                <span className="absolute -top-3 left-1/2 h-6 w-24 -translate-x-1/2 rotate-2 bg-[#ffd98a]/80" />
+                <p className="text-sm font-extrabold text-ink/60">A note for you</p>
+                <blockquote className="mt-1 font-[family-name:var(--font-hand)] text-[1.9rem] leading-[1.1]">{note?.text ?? starter}</blockquote>
+                <figcaption className="mt-3 flex items-center justify-between gap-2 text-sm text-ink/60">
+                  <span>{note ? `from a stranger in ${getCountry(note.country).flag} ${getCountry(note.country).name}` : "from the EarthPulse team"}</span>
                   {note && <ReportButton type="kindness" id={note.id} />}
-                </div>
-              </motion.div>
+                </figcaption>
+              </motion.figure>
             )}
 
-            {children}
-
             {happiest.length > 0 && (
-              <div className="card">
-                <p className="mb-3 font-extrabold">🌍 Happiest countries today</p>
-                <ol className="flex flex-col gap-2">
-                  {happiest.map((c, i) => (
-                    <li key={c.code} className="flex items-center gap-3">
-                      <span className="text-muted w-4 text-sm font-bold">{i + 1}</span>
-                      <span className="text-xl">{c.flag}</span>
-                      <span className="flex-1 font-bold">{c.name}</span>
-                      <span className="text-gold font-extrabold">{happyPercent(c.counts)}%</span>
-                    </li>
+              <div>
+                <h2 className="mb-2 text-lg font-extrabold">Happiest places right now</h2>
+                <div className="-mx-5 flex gap-2 overflow-x-auto px-5 pb-1">
+                  {happiest.map((c) => (
+                    <span key={c.code} className="flex shrink-0 items-center gap-2 rounded-full bg-white/10 py-1.5 pl-2 pr-3.5">
+                      <span className="text-2xl">{c.flag}</span>
+                      <span className="text-sm font-bold">{c.name}</span>
+                      <span className="text-sm font-extrabold text-gold">{happyPercent(c.counts)}%</span>
+                    </span>
                   ))}
-                </ol>
+                </div>
               </div>
             )}
 
-            <div className="card">
-              <p className="font-extrabold">🔥 Day {streak} streak</p>
-              <p className="text-muted text-sm">
-                {totalVotes(world).toLocaleString()} moods shared today. The world resets at midnight UTC 🌙
-              </p>
-            </div>
+            {children}
           </motion.div>
         )}
       </AnimatePresence>
@@ -226,21 +233,31 @@ export default function MoodModule({ onVoted, children }: Props) {
 
 const emptyCounts = (): MoodCounts => ({ 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 });
 
-function MoodBar({ counts }: { counts: MoodCounts }) {
+// Mood spectrum ribbon: har rang aik mood, chaurai = kitne log
+function Spectrum({ counts }: { counts: MoodCounts }) {
   const t = totalVotes(counts);
   if (!t) return null;
   return (
-    <div className="mt-4 flex h-3 w-full overflow-hidden rounded-full bg-white/10">
-      {MOODS.map((m) => (
-        <motion.div
-          key={m.value}
-          initial={{ width: 0 }}
-          animate={{ width: `${(counts[m.value] / t) * 100}%` }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          style={{ background: m.color }}
-          title={`${m.emoji} ${m.label}`}
-        />
-      ))}
+    <div className="mt-5">
+      <div className="flex h-4 w-full overflow-hidden rounded-full bg-white/10">
+        {MOODS.map((m) => (
+          <motion.div
+            key={m.value}
+            initial={{ width: 0 }}
+            animate={{ width: `${(counts[m.value] / t) * 100}%` }}
+            transition={{ duration: 0.9, ease: "easeOut" }}
+            style={{ background: m.color }}
+            title={`${m.emoji} ${m.label}: ${counts[m.value]}`}
+          />
+        ))}
+      </div>
+      <div className="text-muted mt-1.5 flex justify-between text-lg">
+        {MOODS.map((m) => (
+          <span key={m.value} className={counts[m.value] ? "" : "opacity-30"}>
+            {m.emoji}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }

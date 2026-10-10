@@ -168,7 +168,7 @@ function WriteLine({ onSubmit }: { onSubmit: (text: string, nickname: string) =>
   return (
     <AnimatePresence mode="wait">
       {!open ? (
-        <motion.button key="btn" onClick={() => setOpen(true)} className="bg-gold rounded-full py-3 text-lg font-black text-black active:scale-95">
+        <motion.button key="btn" onClick={() => setOpen(true)} className="bg-gold rounded-full py-3 text-lg font-black text-ink active:scale-95">
           ✍️ Write the next line
         </motion.button>
       ) : (
@@ -196,7 +196,7 @@ function WriteLine({ onSubmit }: { onSubmit: (text: string, nickname: string) =>
                 if (await onSubmit(text, nickname)) setOpen(false);
                 setSending(false);
               }}
-              className="bg-gold rounded-full px-5 py-2 font-black text-black disabled:opacity-40"
+              className="bg-gold rounded-full px-5 py-2 font-black text-ink disabled:opacity-40"
             >
               {sending ? "Adding…" : "Add to vote"}
             </button>

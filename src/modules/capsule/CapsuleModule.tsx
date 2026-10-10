@@ -74,7 +74,7 @@ export default function CapsuleModule() {
           <button
             key={id}
             onClick={() => setTab(id)}
-            className={`flex-1 rounded-full py-2 text-sm font-extrabold transition ${tab === id ? "bg-gold text-black" : "text-muted"}`}
+            className={`flex-1 rounded-full py-2 text-sm font-extrabold transition ${tab === id ? "bg-gold text-ink" : "text-muted"}`}
           >
             {label}
           </button>
@@ -142,7 +142,7 @@ function WriteCapsule({ onDone }: { onDone: () => void }) {
             <button
               key={p.id}
               onClick={() => setPeriod(p.id)}
-              className={`rounded-2xl py-2 text-sm font-extrabold ${period === p.id ? "bg-gold text-black" : "bg-white/5"}`}
+              className={`rounded-2xl py-2 text-sm font-extrabold ${period === p.id ? "bg-gold text-ink" : "bg-white/5"}`}
             >
               {p.label}
             </button>
@@ -152,11 +152,11 @@ function WriteCapsule({ onDone }: { onDone: () => void }) {
       <div>
         <p className="mb-2 text-sm font-extrabold">Who can read it?</p>
         <div className="grid grid-cols-2 gap-2">
-          <button onClick={() => setVisibility("public")} className={`rounded-2xl p-3 text-left ${visibility === "public" ? "bg-gold text-black" : "bg-white/5"}`}>
+          <button onClick={() => setVisibility("public")} className={`rounded-2xl p-3 text-left ${visibility === "public" ? "bg-gold text-ink" : "bg-white/5"}`}>
             <span className="block text-xl">🌍</span>
             <span className="block text-sm font-extrabold">The world</span>
           </button>
-          <button onClick={() => setVisibility("private")} className={`rounded-2xl p-3 text-left ${visibility === "private" ? "bg-gold text-black" : "bg-white/5"}`}>
+          <button onClick={() => setVisibility("private")} className={`rounded-2xl p-3 text-left ${visibility === "private" ? "bg-gold text-ink" : "bg-white/5"}`}>
             <span className="block text-xl">🔐</span>
             <span className="block text-sm font-extrabold">Only future me</span>
           </button>
@@ -177,7 +177,7 @@ function WriteCapsule({ onDone }: { onDone: () => void }) {
       <button
         onClick={submit}
         disabled={sending || text.trim().length < 10}
-        className="bg-gold rounded-full py-3 text-lg font-black text-black transition active:scale-95 disabled:opacity-40"
+        className="bg-gold rounded-full py-3 text-lg font-black text-ink transition active:scale-95 disabled:opacity-40"
       >
         {sending ? "Sealing…" : "Seal capsule 🔒"}
       </button>

@@ -15,7 +15,7 @@ export default function BottomNav() {
   const path = usePathname();
   if (path.startsWith("/admin")) return null;
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-[#050816]/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl">
+    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-[#0e0a2e]/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl">
       <ul className="mx-auto flex max-w-md">
         {TABS.map((t) => {
           const active = t.href === "/" ? path === "/" : path.startsWith(t.href);

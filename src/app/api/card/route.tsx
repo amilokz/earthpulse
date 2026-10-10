@@ -27,7 +27,7 @@ export async function GET(req: Request) {
           justifyContent: "space-between",
           padding: 80,
           color: "white",
-          background: "radial-gradient(circle at 50% 0%, #1b2a6b 0%, #050816 65%)",
+          background: "linear-gradient(180deg, #0e0a2e 0%, #2a1d63 55%, #6a2f6b 100%)",
           fontFamily: "sans-serif",
         }}
       >
@@ -35,16 +35,16 @@ export async function GET(req: Request) {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={await icon} width={84} height={84} alt="" />
           <div style={{ display: "flex", fontSize: 52, fontWeight: 800 }}>
-            Earth<span style={{ color: "#FFC93C" }}>Pulse</span>
+            Earth<span style={{ color: "#FFB648" }}>Pulse</span>
           </div>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-          <div style={{ fontSize: 40, color: "#A5B0D6" }}>Today on Earth</div>
+          <div style={{ fontSize: 40, color: "#B9B3E6" }}>Today on Earth</div>
           {hasHappy ? (
             <div style={{ display: "flex", flexDirection: "column", fontSize: 96, fontWeight: 800, lineHeight: 1.05 }}>
               <span>{country.name} is</span>
-              <span style={{ color: "#FFC93C" }}>{happy}% happy</span>
+              <span style={{ color: "#FFB648" }}>{happy}% happy</span>
             </div>
           ) : (
             <div style={{ display: "flex", fontSize: 96, fontWeight: 800, lineHeight: 1.05 }}>How is the world feeling?</div>
@@ -58,8 +58,8 @@ export async function GET(req: Request) {
         </div>
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 38 }}>
-          <div style={{ display: "flex", color: "#FFC93C", fontWeight: 800 }}>{streak > 0 ? `Day ${streak} streak` : ""}</div>
-          <div style={{ display: "flex", padding: "18px 32px", borderRadius: 999, background: "#FFC93C", color: "#050816", fontWeight: 800 }}>
+          <div style={{ display: "flex", color: "#FFB648", fontWeight: 800 }}>{streak > 0 ? `Day ${streak} streak` : ""}</div>
+          <div style={{ display: "flex", padding: "18px 32px", borderRadius: 999, background: "#FFB648", color: "#2B2150", fontWeight: 800 }}>
             Add your dot · one tap
           </div>
         </div>
