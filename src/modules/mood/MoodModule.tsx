@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useMemo, useState } from "react";
 import PulseGlobe from "@/components/PulseGlobe";
+import ReportButton from "@/components/ReportButton";
 import { fetchToday, sendMood, type CountryMood, type KindnessNote } from "@/lib/api";
 import { getCountry } from "@/lib/countries";
 import { saveMood, todayKey, useLocalState } from "@/lib/local";
@@ -172,9 +173,12 @@ export default function MoodModule({ onVoted, children }: Props) {
               >
                 <p className="text-sm font-bold text-pink-200">💌 A note for you</p>
                 <p className="mt-2 text-lg leading-snug">“{note?.text ?? starter}”</p>
-                <p className="text-muted mt-2 text-sm">
-                  {note ? <>— a stranger in {getCountry(note.country).flag} {getCountry(note.country).name}</> : "— the EarthPulse team"}
-                </p>
+                <div className="mt-2 flex items-center justify-between gap-2">
+                  <p className="text-muted text-sm">
+                    {note ? <>— a stranger in {getCountry(note.country).flag} {getCountry(note.country).name}</> : "— the EarthPulse team"}
+                  </p>
+                  {note && <ReportButton type="kindness" id={note.id} />}
+                </div>
               </motion.div>
             )}
 

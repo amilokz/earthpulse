@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { connection } from "next/server";
 import { activeModules, modules } from "@/config/modules";
+import KindnessModule from "@/modules/kindness/KindnessModule";
 import MoodModule from "@/modules/mood/MoodModule";
 
 export default function Today() {
@@ -34,7 +35,7 @@ async function TodayModules() {
 
   return (
     <>
-      {active.includes("mood") && <MoodModule />}
+      {active.includes("mood") && <MoodModule>{active.includes("kindness") && <KindnessModule />}</MoodModule>}
 
       {upcoming.length > 0 && (
         <section className="w-full">
