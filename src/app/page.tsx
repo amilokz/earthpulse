@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Suspense } from "react";
 import { connection } from "next/server";
 import { activeModules, modules } from "@/config/modules";
@@ -6,20 +7,7 @@ import MoodModule from "@/modules/mood/MoodModule";
 
 export default function Today() {
   return (
-    <main className="mx-auto flex w-full max-w-2xl flex-col items-center gap-8 px-4 pb-16 pt-5">
-      <header className="flex w-full items-center justify-between">
-        <span className="text-xl font-black tracking-tight">
-          Earth<span className="text-gold">Pulse</span>
-        </span>
-        <span className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-bold">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-green-400" />
-          </span>
-          LIVE
-        </span>
-      </header>
-
+    <main className="mx-auto flex w-full max-w-2xl flex-col items-center gap-8 px-4 pt-4">
       <Suspense fallback={<div className="aspect-square w-full max-w-[560px] animate-pulse rounded-full bg-white/5" />}>
         <TodayModules />
       </Suspense>
@@ -35,12 +23,22 @@ async function TodayModules() {
 
   return (
     <>
-      {active.includes("mood") && <MoodModule>{active.includes("kindness") && <KindnessModule />}</MoodModule>}
+      {active.includes("mood") && (
+        <MoodModule>
+          {active.includes("story") && (
+            <NextCard href="/story" emoji="📖" title="Today's story needs a line" text="Vote for the next sentence of the world's story, or write your own." />
+          )}
+          {active.includes("kindness") && <KindnessModule />}
+          {active.includes("capsule") && (
+            <NextCard href="/capsule" emoji="⏳" title="Write to the future" text="Lock a message for 1 month to 10 years. Read the ones opening today." />
+          )}
+        </MoodModule>
+      )}
 
       {upcoming.length > 0 && (
         <section className="w-full">
           <p className="text-muted mb-3 text-center text-sm font-bold">Coming soon to EarthPulse</p>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3">
             {upcoming.map((m) => (
               <div key={m.id} className="card flex flex-col items-center gap-1 !p-4 text-center opacity-70">
                 <span className="text-3xl">{m.emoji}</span>
@@ -51,5 +49,18 @@ async function TodayModules() {
         </section>
       )}
     </>
+  );
+}
+
+function NextCard({ href, emoji, title, text }: { href: string; emoji: string; title: string; text: string }) {
+  return (
+    <Link href={href} className="card flex items-center gap-4 transition hover:bg-white/10 active:scale-[0.98]">
+      <span className="text-4xl">{emoji}</span>
+      <span className="flex-1">
+        <span className="block font-extrabold">{title}</span>
+        <span className="text-muted block text-sm">{text}</span>
+      </span>
+      <span className="text-gold text-2xl font-black">›</span>
+    </Link>
   );
 }
