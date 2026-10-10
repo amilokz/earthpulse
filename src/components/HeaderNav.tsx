@@ -7,6 +7,7 @@ export const NAV = [
   { href: "/", emoji: "🌍", label: "Today" },
   { href: "/mood", emoji: "🗺️", label: "Countries" },
   { href: "/story", emoji: "📖", label: "Story" },
+  { href: "/play", emoji: "🎮", label: "Play" },
   { href: "/kindness", emoji: "💌", label: "Kindness" },
   { href: "/capsule", emoji: "⏳", label: "Capsule" },
   { href: "/me", emoji: "🔥", label: "My Pulse" },

@@ -26,10 +26,13 @@ async function TodayModules() {
       {active.includes("mood") && (
         <MoodModule>
           {active.includes("kindness") && <KindnessModule />}
-          {(active.includes("story") || active.includes("capsule")) && (
+          {(active.includes("story") || active.includes("capsule") || active.includes("game")) && (
             <nav aria-label="More to do today" className="card !p-0">
               <h2 className="px-5 pb-1 pt-4 text-lg font-extrabold">More to do today</h2>
               <ul className="divide-y divide-white/10">
+                {active.includes("game") && (
+                  <NextRow href="/play" emoji="🎮" title="Play Pulse Journey" text="Cheer up the world, one match at a time. Your free hammer is waiting." />
+                )}
                 {active.includes("story") && (
                   <NextRow href="/story" emoji="📖" title="Add a line to the world's story" text="Vote on tomorrow's sentence, or write your own." />
                 )}

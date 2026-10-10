@@ -17,8 +17,8 @@ export const modules: ModuleConfig[] = [
   { id: "kindness", title: "Kindness Notes", emoji: "💌", active: true, order: 2 },
   { id: "story", title: "World's Story", emoji: "📖", active: true, order: 3 },
   { id: "capsule", title: "Time Capsule", emoji: "⏳", active: true, order: 4 },
-  { id: "spotlight", title: "Country Spotlight", emoji: "🌍", active: false, order: 5 },
-  { id: "game", title: "Pulse Journey", emoji: "🎮", active: false, order: 6 },
+  { id: "spotlight", title: "Country Spotlight", emoji: "🌍", active: true, order: 5 },
+  { id: "game", title: "Pulse Journey", emoji: "🎮", active: true, order: 6 },
 ];
 
 export function activeModules(now = new Date()): ModuleConfig[] {

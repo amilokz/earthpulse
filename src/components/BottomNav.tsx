@@ -6,7 +6,7 @@ import { motion } from "motion/react";
 
 import { NAV, isActive } from "./HeaderNav";
 
-const TABS = NAV.filter((t) => ["/", "/story", "/kindness", "/capsule", "/me"].includes(t.href)).map((t) =>
+const TABS = NAV.filter((t) => ["/", "/story", "/play", "/capsule", "/me"].includes(t.href)).map((t) =>
   t.href === "/me" ? { ...t, label: "Me" } : t,
 );
 

@@ -10,7 +10,9 @@ How is the world feeling today? One tap, no login: share your mood and watch the
 - ✅ World's Story: 1 line + 1 vote per day, daily winner (no cron)
 - ✅ PWA (installable), About/Privacy/Terms, /admin moderation
 - ⏳ Deploy to `pulse.akclnt.com` (VPS + PM2 + Nginx + Cloudflare)
-- ⏳ Phase 2: languages, push notifications, Country Spotlight, Pulse Journey game
+- ✅ Pulse Journey game (/play): 30 levels, daily challenge, live local time + weather
+- ✅ Country pages, kindness wall, My Pulse, Country of the day
+- ⏳ Phase 2: languages, push notifications, more game countries
 
 ## Tech
 
