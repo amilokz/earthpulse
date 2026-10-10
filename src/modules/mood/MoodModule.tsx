@@ -1,51 +1,106 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import PulseGlobe from "@/components/PulseGlobe";
+import { fetchToday, sendMood, type CountryMood, type KindnessNote } from "@/lib/api";
+import { getCountry } from "@/lib/countries";
 import { saveMood, todayKey, useLocalState } from "@/lib/local";
-import { MOCK_COUNTRIES, MOCK_KINDNESS, MOCK_USER_COUNTRY, type CountryMood } from "@/lib/mock";
-import { MOODS, happyPercent, moodByValue, totalVotes, type MoodValue } from "@/lib/moods";
+import { MOODS, happyPercent, moodByValue, totalVotes, type MoodCounts, type MoodValue } from "@/lib/moods";
 
-export default function MoodModule() {
-  const [countries, setCountries] = useState<CountryMood[]>(MOCK_COUNTRIES);
+const MIN_VOTES_FOR_RANKING = 3; // 1 vote se "100% happy" na dikhe
+
+// Jab tak users ke apne notes na hon, team ke starter notes (honestly labelled)
+const STARTER_NOTES = [
+  "Whoever is reading this: hard days pass. You've survived every one so far. 🌱",
+  "Aaj ka din bura ho sakta hai, lekin tumhari zindagi buri nahi hai. 💛",
+  "Drink some water, take a slow breath. You matter more than you know.",
+];
+
+interface Props {
+  onVoted?: (mood: MoodValue) => void;
+  children?: React.ReactNode; // vote ke baad dikhne wale doosre cards
+}
+
+export default function MoodModule({ onVoted, children }: Props) {
   const local = useLocalState();
-  const [justVoted, setJustVoted] = useState<MoodValue | null>(null); // storage blocked ho tab bhi result dikhe
-  const [noteIdx] = useState(() => Math.floor(Math.random() * MOCK_KINDNESS.length));
+  const [countries, setCountries] = useState<CountryMood[]>([]);
+  const [myCountry, setMyCountry] = useState("XX");
+  const [serverMood, setServerMood] = useState<MoodValue | null>(null);
+  const [note, setNote] = useState<KindnessNote | null>(null);
+  const [starter] = useState(() => STARTER_NOTES[Math.floor(Math.random() * STARTER_NOTES.length)]);
+  const [loading, setLoading] = useState(true);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Aaj pehle vote kiya hua hai to seedha result dikhao
-  const voted = local?.history[todayKey()] ?? justVoted;
-  const streak = Math.max(local?.streak ?? 0, justVoted ? 1 : 0);
+  useEffect(() => {
+    let alive = true;
+    fetchToday()
+      .then((d) => {
+        if (!alive) return;
+        setCountries(d.countries);
+        setMyCountry(d.me.country);
+        setServerMood(d.me.mood);
+        if (d.me.mood) saveMood(d.me.mood); // dusre browser tab / cleared storage sync
+      })
+      .catch(() => alive && setError("Couldn't reach EarthPulse. Check your internet."))
+      .finally(() => alive && setLoading(false));
+    return () => {
+      alive = false;
+    };
+  }, []);
 
-  const me = countries.find((c) => c.code === MOCK_USER_COUNTRY)!;
+  const voted: MoodValue | null = serverMood ?? local?.history[todayKey()] ?? null;
+  const streak = Math.max(local?.streak ?? 0, voted ? 1 : 0);
+
+  const vote = async (v: MoodValue) => {
+    if (sending) return;
+    setSending(true);
+    setError(null);
+    try {
+      const d = await sendMood(v);
+      setCountries(d.countries);
+      setMyCountry(d.me.country);
+      setServerMood(d.me.mood);
+      setNote(d.note);
+      saveMood(d.me.mood ?? v);
+      onVoted?.(v);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const me = getCountry(myCountry);
+  const myCounts = countries.find((c) => c.code === myCountry)?.counts ?? emptyCounts();
   const world = useMemo(() => {
-    const sum = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } as CountryMood["counts"];
-    countries.forEach((c) => ([1, 2, 3, 4, 5] as MoodValue[]).forEach((k) => (sum[k] += c.counts[k])));
+    const sum = emptyCounts();
+    countries.forEach((c) => MOODS.forEach((m) => (sum[m.value] += c.counts[m.value])));
     return sum;
   }, [countries]);
   const happiest = useMemo(
-    () => [...countries].sort((a, b) => happyPercent(b.counts) - happyPercent(a.counts)).slice(0, 5),
+    () =>
+      countries
+        .filter((c) => c.code !== "XX" && totalVotes(c.counts) >= MIN_VOTES_FOR_RANKING)
+        .sort((a, b) => happyPercent(b.counts) - happyPercent(a.counts))
+        .slice(0, 5),
     [countries],
   );
 
-  const vote = (v: MoodValue) => {
-    saveMood(v);
-    setJustVoted(v);
-    // Optimistic: apna vote foran count mein (Step 2 mein POST /api/mood)
-    setCountries((list) =>
-      list.map((c) => (c.code === MOCK_USER_COUNTRY ? { ...c, counts: { ...c.counts, [v]: c.counts[v] + 1 } } : c)),
-    );
-  };
-
-  const sameFeel = voted ? world[voted] : 0;
-  const note = MOCK_KINDNESS[noteIdx];
+  const sameFeel = voted ? Math.max(0, world[voted] - 1) : 0;
+  const myTotal = totalVotes(myCounts);
 
   return (
     <section className="flex w-full flex-col items-center gap-6">
-      <PulseGlobe countries={countries} highlight={voted ? MOCK_USER_COUNTRY : undefined} />
+      <PulseGlobe countries={countries} highlight={voted ? myCountry : undefined} />
+
+      {error && <p className="rounded-2xl bg-red-500/15 px-4 py-2 text-sm font-bold text-red-200">{error}</p>}
 
       <AnimatePresence mode="wait">
-        {!voted ? (
+        {loading ? (
+          <motion.div key="load" exit={{ opacity: 0 }} className="h-40 w-full max-w-md animate-pulse rounded-3xl bg-white/5" />
+        ) : !voted ? (
           <motion.div
             key="ask"
             initial={{ opacity: 0, y: 20 }}
@@ -62,12 +117,13 @@ export default function MoodModule() {
                 <motion.button
                   key={m.value}
                   onClick={() => vote(m.value)}
+                  disabled={sending}
                   initial={{ opacity: 0, scale: 0.6 }}
                   animate={{ opacity: 1, scale: 1, transition: { delay: 0.08 * i } }}
                   whileHover={{ scale: 1.12, y: -4 }}
                   whileTap={{ scale: 0.9 }}
                   aria-label={m.label}
-                  className="flex aspect-square flex-1 flex-col items-center justify-center rounded-3xl border border-white/10 bg-white/5 text-4xl shadow-lg backdrop-blur sm:text-5xl"
+                  className="flex aspect-square flex-1 flex-col items-center justify-center rounded-3xl border border-white/10 bg-white/5 text-4xl shadow-lg backdrop-blur disabled:opacity-50 sm:text-5xl"
                 >
                   {m.emoji}
                   <span className="text-muted mt-1 text-[11px] font-bold sm:text-xs">{m.label}</span>
@@ -83,14 +139,28 @@ export default function MoodModule() {
             className="flex w-full max-w-md flex-col gap-4"
           >
             <div className="card text-center">
-              <p className="text-muted text-sm font-bold">Your dot is glowing ✨</p>
-              <p className="mt-2 text-2xl font-extrabold">
-                {me.flag} {me.name} is <span className="text-gold">{happyPercent(me.counts)}% happy</span> today
+              <p className="text-muted text-sm font-bold">
+                You felt {moodByValue(voted).emoji} {moodByValue(voted).label.toLowerCase()} today · your dot is glowing ✨
               </p>
-              <MoodBar counts={me.counts} />
+              {myTotal >= MIN_VOTES_FOR_RANKING ? (
+                <p className="mt-2 text-2xl font-extrabold">
+                  {me.flag} {me.name} is <span className="text-gold">{happyPercent(myCounts)}% happy</span> today
+                </p>
+              ) : (
+                <p className="mt-2 text-2xl font-extrabold">
+                  You&apos;re one of the first from {me.flag} <span className="text-gold">{me.name}</span> today!
+                </p>
+              )}
+              <MoodBar counts={myCounts} />
               <p className="text-muted mt-3 text-sm">
-                You and <b className="text-white">{sameFeel.toLocaleString()}</b> people feel{" "}
-                {moodByValue(voted).emoji} {moodByValue(voted).label.toLowerCase()} today. You&apos;re not alone.
+                {sameFeel > 0 ? (
+                  <>
+                    You and <b className="text-white">{sameFeel.toLocaleString()}</b> others feel{" "}
+                    {moodByValue(voted).label.toLowerCase()} today. You&apos;re not alone.
+                  </>
+                ) : (
+                  <>Share EarthPulse so your friends can add their dots too 🌍</>
+                )}
               </p>
             </div>
 
@@ -100,34 +170,37 @@ export default function MoodModule() {
                 animate={{ opacity: 1, rotateX: 0, transition: { delay: 0.4 } }}
                 className="card border-pink-300/30 bg-pink-400/10"
               >
-                <p className="text-sm font-bold text-pink-200">💌 A note from a stranger</p>
-                <p className="mt-2 text-lg leading-snug">“{note.text}”</p>
-                <p className="text-muted mt-2 text-sm">— a friend in {note.flag} {note.from}</p>
+                <p className="text-sm font-bold text-pink-200">💌 A note for you</p>
+                <p className="mt-2 text-lg leading-snug">“{note?.text ?? starter}”</p>
+                <p className="text-muted mt-2 text-sm">
+                  {note ? <>— a stranger in {getCountry(note.country).flag} {getCountry(note.country).name}</> : "— the EarthPulse team"}
+                </p>
               </motion.div>
             )}
 
-            <div className="card">
-              <p className="mb-3 font-extrabold">🌍 Happiest countries right now</p>
-              <ol className="flex flex-col gap-2">
-                {happiest.map((c, i) => (
-                  <li key={c.code} className="flex items-center gap-3">
-                    <span className="text-muted w-4 text-sm font-bold">{i + 1}</span>
-                    <span className="text-xl">{c.flag}</span>
-                    <span className="flex-1 font-bold">{c.name}</span>
-                    <span className="text-gold font-extrabold">{happyPercent(c.counts)}%</span>
-                  </li>
-                ))}
-              </ol>
-              <p className="text-muted mt-3 text-xs">
-                {totalVotes(world).toLocaleString()} moods shared today across the world
-              </p>
-            </div>
+            {children}
 
-            <div className="card flex items-center justify-between">
-              <div>
-                <p className="font-extrabold">🔥 Day {streak} streak</p>
-                <p className="text-muted text-sm">Come back tomorrow, the world resets at midnight UTC 🌙</p>
+            {happiest.length > 0 && (
+              <div className="card">
+                <p className="mb-3 font-extrabold">🌍 Happiest countries today</p>
+                <ol className="flex flex-col gap-2">
+                  {happiest.map((c, i) => (
+                    <li key={c.code} className="flex items-center gap-3">
+                      <span className="text-muted w-4 text-sm font-bold">{i + 1}</span>
+                      <span className="text-xl">{c.flag}</span>
+                      <span className="flex-1 font-bold">{c.name}</span>
+                      <span className="text-gold font-extrabold">{happyPercent(c.counts)}%</span>
+                    </li>
+                  ))}
+                </ol>
               </div>
+            )}
+
+            <div className="card">
+              <p className="font-extrabold">🔥 Day {streak} streak</p>
+              <p className="text-muted text-sm">
+                {totalVotes(world).toLocaleString()} moods shared today. The world resets at midnight UTC 🌙
+              </p>
             </div>
           </motion.div>
         )}
@@ -136,8 +209,11 @@ export default function MoodModule() {
   );
 }
 
-function MoodBar({ counts }: { counts: CountryMood["counts"] }) {
+const emptyCounts = (): MoodCounts => ({ 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 });
+
+function MoodBar({ counts }: { counts: MoodCounts }) {
   const t = totalVotes(counts);
+  if (!t) return null;
   return (
     <div className="mt-4 flex h-3 w-full overflow-hidden rounded-full bg-white/10">
       {MOODS.map((m) => (

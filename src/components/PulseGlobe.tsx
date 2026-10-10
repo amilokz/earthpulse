@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { GlobeMethods } from "react-globe.gl";
-import type { CountryMood } from "@/lib/mock";
+import type { CountryMood } from "@/lib/api";
 import { dominantMood, totalVotes } from "@/lib/moods";
 
 // three.js browser-only hai, isliye SSR off
@@ -28,8 +28,9 @@ export default function PulseGlobe({ countries, highlight }: Props) {
   }, []);
 
   const points = useMemo(() => {
-    const max = Math.max(...countries.map((c) => totalVotes(c.counts)));
-    return countries.map((c) => ({
+    const list = countries.filter((c) => c.code !== "XX" && totalVotes(c.counts) > 0);
+    const max = Math.max(1, ...list.map((c) => totalVotes(c.counts)));
+    return list.map((c) => ({
       ...c,
       color: dominantMood(c.counts).color,
       alt: 0.02 + (totalVotes(c.counts) / max) * 0.12,
@@ -48,9 +49,15 @@ export default function PulseGlobe({ countries, highlight }: Props) {
     ctl.autoRotate = true;
     ctl.autoRotateSpeed = 0.5;
     ctl.enableZoom = false;
-    const h = countries.find((c) => c.code === highlight);
+    const h = countries.find((c) => c.code === highlight && c.code !== "XX");
     g.pointOfView({ lat: h?.lat ?? 20, lng: h?.lng ?? 40, altitude: 2.2 }, 0);
   };
+
+  // Vote ke baad globe user ki country ki taraf ghoom jaye
+  useEffect(() => {
+    const h = countries.find((c) => c.code === highlight && c.code !== "XX");
+    if (h) globeRef.current?.pointOfView({ lat: h.lat, lng: h.lng, altitude: 2 }, 1200);
+  }, [highlight, countries]);
 
   return (
     <div ref={wrapRef} className="relative aspect-square w-full max-w-[560px]">
