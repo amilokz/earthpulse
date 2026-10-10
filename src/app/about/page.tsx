@@ -24,6 +24,19 @@ export default function About() {
       </p>
       <h2>Anonymous by design</h2>
       <p>No account, no login, no profile. Read our <a href="/privacy">Privacy Policy</a> for exactly what we store.</p>
+      <h2>Questions people ask</h2>
+      <h3 className="font-extrabold text-white">Do I need an account?</h3>
+      <p>No. Open the site, tap an emoji, done. A random ID in a cookie lets you vote once a day.</p>
+      <h3 className="font-extrabold text-white">When does a new day start?</h3>
+      <p>At midnight UTC, the same moment for everyone. That keeps the whole world on one shared day.</p>
+      <h3 className="font-extrabold text-white">How is my country detected?</h3>
+      <p>From your internet connection or your device&apos;s time zone. We never store your city or exact location.</p>
+      <h3 className="font-extrabold text-white">Are the numbers scientific?</h3>
+      <p>No. They show how the people who chose to vote feel today. Think of it as a live snapshot, not a survey.</p>
+      <h3 className="font-extrabold text-white">How does the story pick a line?</h3>
+      <p>Anyone can write one line a day and vote for one line a day. At midnight UTC the line with the most votes joins the story.</p>
+      <h3 className="font-extrabold text-white">Can I use EarthPulse like an app?</h3>
+      <p>Yes. On your phone, open the browser menu and choose &quot;Add to Home Screen&quot;.</p>
       <h2>Contact</h2>
       <p>
         EarthPulse is built by <a href="https://akclnt.com" target="_blank" rel="noopener noreferrer">AKCLNT</a>. Reach us

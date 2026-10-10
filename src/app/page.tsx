@@ -4,10 +4,11 @@ import { connection } from "next/server";
 import { activeModules } from "@/config/modules";
 import KindnessModule from "@/modules/kindness/KindnessModule";
 import MoodModule from "@/modules/mood/MoodModule";
+import TodaySections from "@/modules/today/TodaySections";
 
 export default function Today() {
   return (
-    <main className="mx-auto flex w-full max-w-2xl flex-col items-center gap-10 px-5 pt-2">
+    <main className="mx-auto flex w-full max-w-6xl flex-col items-center gap-14 px-5 pt-2 lg:px-8">
       <Suspense fallback={<div className="aspect-square w-full max-w-[560px] animate-pulse rounded-full bg-white/5" />}>
         <TodayModules />
       </Suspense>
@@ -40,7 +41,7 @@ async function TodayModules() {
           )}
         </MoodModule>
       )}
-
+      <TodaySections />
     </>
   );
 }

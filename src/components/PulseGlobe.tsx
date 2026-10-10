@@ -60,7 +60,7 @@ export default function PulseGlobe({ countries, highlight }: Props) {
   }, [highlight, countries]);
 
   return (
-    <div ref={wrapRef} className="relative aspect-square w-full max-w-[560px]">
+    <div ref={wrapRef} className="relative aspect-square w-full max-w-[560px] lg:max-w-[640px]">
       {size > 0 && (
         <Globe
           ref={globeRef}

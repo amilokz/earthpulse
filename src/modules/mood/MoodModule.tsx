@@ -98,28 +98,29 @@ export default function MoodModule({ onVoted, children }: Props) {
   const ARC = [0, 16, 24, 16, 0];
 
   return (
-    <section className="flex w-full flex-col items-center">
-      <div className="relative w-full">
+    <section className="flex w-full flex-col items-center lg:grid lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-12">
+      <div className="relative w-full lg:sticky lg:top-6">
         <div className="heartbeat pointer-events-none absolute left-1/2 top-1/2 aspect-square w-[78%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,#ff9a5a55_0%,#ff6b8b22_45%,transparent_70%)] blur-2xl" />
         <div className="relative mx-auto flex justify-center">
           <PulseGlobe countries={countries} highlight={voted ? myCountry : undefined} />
         </div>
       </div>
 
+      <div className="flex w-full flex-col items-center">
       {error && <p className="mb-4 rounded-2xl bg-red-500/20 px-4 py-2 text-sm font-bold text-red-100">{error}</p>}
 
       <AnimatePresence mode="wait">
         {loading ? (
-          <motion.div key="load" exit={{ opacity: 0 }} className="-mt-10 h-48 w-full max-w-md animate-pulse rounded-[2rem] bg-white/5" />
+          <motion.div key="load" exit={{ opacity: 0 }} className="-mt-10 h-48 w-full max-w-md lg:mt-0 animate-pulse rounded-[2rem] bg-white/5" />
         ) : !voted ? (
           <motion.div
             key="ask"
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96 }}
-            className="relative z-10 -mt-14 flex w-full flex-col items-center text-center"
+            className="relative z-10 -mt-14 flex w-full flex-col items-center text-center lg:mt-0"
           >
-            <h1 className="max-w-[12ch] text-[2.6rem] font-extrabold leading-[0.95] sm:text-6xl">How do you feel today?</h1>
+            <h1 className="max-w-[12ch] text-[2.6rem] font-extrabold leading-[0.95] sm:text-6xl lg:text-7xl">How do you feel today?</h1>
             <p className="text-muted mt-3 max-w-[30ch] text-base">Tap one. Your dot joins the world&apos;s live mood.</p>
 
             <div className="mt-6 flex w-full max-w-md items-start justify-between px-1">
@@ -151,7 +152,7 @@ export default function MoodModule({ onVoted, children }: Props) {
             </p>
           </motion.div>
         ) : (
-          <motion.div key="result" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} className="relative z-10 -mt-10 flex w-full max-w-md flex-col gap-5">
+          <motion.div key="result" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} className="relative z-10 -mt-10 flex w-full max-w-md flex-col gap-5 lg:mt-0 lg:max-w-lg">
             <div className="text-center">
               <p className="text-muted text-sm font-bold">
                 You felt {moodByValue(voted).emoji} {moodByValue(voted).label.toLowerCase()} today
@@ -227,6 +228,7 @@ export default function MoodModule({ onVoted, children }: Props) {
           </motion.div>
         )}
       </AnimatePresence>
+      </div>
     </section>
   );
 }

@@ -38,9 +38,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en">
       <body className="antialiased">
         <AppHeader />
-        <div className="pb-24">
+        <div className="pb-24 lg:pb-10">
           {children}
-          <footer className="text-muted mx-auto mt-12 flex max-w-2xl flex-wrap justify-center gap-x-5 gap-y-2 px-4 text-xs font-bold">
+          <footer className="text-muted mx-auto mt-16 flex max-w-6xl flex-wrap justify-center gap-x-5 gap-y-2 px-4 text-xs font-bold">
             <Link href="/about">About</Link>
             <Link href="/privacy">Privacy</Link>
             <Link href="/terms">Terms</Link>

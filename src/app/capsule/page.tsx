@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function CapsulePage() {
   return (
-    <main className="mx-auto w-full max-w-md px-4 pt-6">
+    <main className="mx-auto w-full max-w-2xl px-5 pt-6">
       <CapsuleModule />
     </main>
   );

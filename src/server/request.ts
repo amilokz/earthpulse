@@ -85,3 +85,6 @@ export async function readBody(req: Request): Promise<Record<string, unknown>> {
     return {};
   }
 }
+
+/** Server components ke liye abhi ka waqt (request time par, connection() ke baad) */
+export const serverNow = () => Date.now();
