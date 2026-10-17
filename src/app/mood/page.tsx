@@ -10,8 +10,8 @@ import { worldToday } from "@/server/overview";
 import { today } from "@/server/request";
 
 export const metadata: Metadata = {
-  title: "World mood by country today · EarthPulse",
-  description: "See how every country in the world is feeling today, live. Rankings by happiness and links to all 195 countries.",
+  title: "World Mood by Country Today — Live Rankings | EarthPulse",
+  description: "See how every country in the world is feeling today, live — global mood rankings, happiness scores and all 195 countries.",
 };
 
 const toCounts = (c: number[]) => ({ 1: c[0], 2: c[1], 3: c[2], 4: c[3], 5: c[4] });

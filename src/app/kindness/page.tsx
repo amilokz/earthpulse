@@ -9,8 +9,8 @@ import { kindnessCount, latestKindness } from "@/server/overview";
 import { serverNow } from "@/server/request";
 
 export const metadata: Metadata = {
-  title: "Kindness wall · EarthPulse",
-  description: "Short, kind notes from strangers all over the world. Read them, or write one for someone who feels sad today.",
+  title: "Kindness Wall — Read & Share Kind Notes | EarthPulse",
+  description: "Read kind notes from strangers worldwide, or write one for someone feeling sad today. Spread positivity on the kindness wall — free.",
 };
 
 export default function KindnessPage() {

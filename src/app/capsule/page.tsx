@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import CapsuleModule from "@/modules/capsule/CapsuleModule";
 
 export const metadata: Metadata = {
-  title: "Time Capsule · EarthPulse",
-  description: "Write a message to the future. It stays locked for 1 month to 10 years, then opens for you or the whole world.",
+  title: "Time Capsule — Send a Message to the Future | EarthPulse",
+  description: "Write a digital time capsule message to the future — locked for 1 month to 10 years, then opened for you or the world. Free.",
 };
 
 export default function CapsulePage() {

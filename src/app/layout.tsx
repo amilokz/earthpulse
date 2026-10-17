@@ -13,7 +13,7 @@ const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://pulse.akclnt.com";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
   title: "EarthPulse — How is the world feeling today?",
-  description: "One tap, no login. Share your mood and see the whole world's pulse live on a glowing globe.",
+  description: "EarthPulse is a live world mood tracker — share your mood in one tap and watch the global mood map light up. Free, no login.",
   applicationName: "EarthPulse",
   appleWebApp: { capable: true, title: "EarthPulse", statusBarStyle: "black-translucent" },
   openGraph: {

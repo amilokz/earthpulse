@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import PlayHub from "@/modules/game/PlayHub";
 
 export const metadata: Metadata = {
-  title: "Pulse Journey: free puzzle game · EarthPulse",
+  title: "Pulse Journey — Free Puzzle Game | EarthPulse",
   description: "A free match-3 puzzle game: travel from Lahore to Istanbul to Tokyo and cheer people up. Live local time and real weather in every city. No download.",
 };
 

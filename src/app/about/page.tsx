@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Prose from "@/components/Prose";
 
-export const metadata: Metadata = { title: "About · EarthPulse", description: "What EarthPulse is and why we built it." };
+export const metadata: Metadata = { title: "About EarthPulse — The Live World Mood Project", description: "What EarthPulse is: a live global mood tracker where the world shares one daily emotion. Learn why we built it." };
 
 export default function About() {
   return (

@@ -1,3 +1,10 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "World Mood Tracker \u2014 How the World Feels Today | EarthPulse",
+  description: "Live world mood tracker \u2014 share your mood in one tap and explore how every country feels today on the global mood map. Free, no login required.",
+};
+
 import Link from "next/link";
 import { Suspense } from "react";
 import { connection } from "next/server";
